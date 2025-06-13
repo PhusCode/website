@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ทำงานๆ</title>
+  <link rel="icon" href="Images/logo.jpg" type="Images/logo.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      background: linear-gradient(135deg, #ffe6f0, #f9f0ff);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 450px;
+      width: 100%;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ff5e94;
+      margin-bottom: 5px;
+      font-size: 22px;
+    }
+
+    .note {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 15px;
+      color: #333;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background-color: #fafafa;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .choices {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .choice-btn {
+      flex: 1;
+      padding: 12px;
+      background: #f0f0f0;
+      color: #444;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .choice-btn:hover {
+      background: #ffe1ed;
+    }
+
+    .choice-btn.active {
+      background-color: #ff7fa4;
+      color: white;
+      border-color: #ff5e94;
+    }
+
+    input[type="file"] {
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .image-preview {
+      margin-top: 10px;
+      max-width: 100%;
+      display: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #ff5e94;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #ff4181;
+    }
+
+    .btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .back-home {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-btn {
+      border: 1px solid #ff5e94;
+      color: #ff5e94;
+      background: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .success {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .check {
+      font-size: 60px;
+      color: #4CAF50;
+    }
+
+    .error {
+      color: #d32f2f;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+      }
+
+      .choice-btn {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .btn {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="formPage">
+    <h2>ทำงานออกแบบ</h2>
+    <p class="note">จ่ายก่อนเดี๋ยวไปทำให้ 20 บาท 😊</p>
+
+    <form id="designForm" novalidate>
+      <label for="name">ชื่อผู้ส่งงาน:</label>
+      <input type="text" id="name" placeholder="กรอกชื่อของคุณ" aria-required="true">
+      <p class="error" id="nameError">กรุณากรอกชื่อ</p>
+
+      <label for="problem">รายละเอียดงาน:</label>
+      <textarea id="problem" placeholder="ระบุรายละเอียดงานที่ต้องการให้ทำ"></textarea>
+      <p class="error" id="problemError">กรุณากรอกรายละเอียดงาน</p>
+
+      <label id="personLabel">เลือกผู้ทำงาน:</label>
+      <div class="choices" role="radiogroup" aria-labelledby="personLabel">
+        <button type="button" class="choice-btn" onclick="selectPerson(this, 'phu')" aria-label="เลือกภู">ภู</button>
+        <button type="button" class="choice-btn" onclick="selectPerson(this, 'captain')" aria-label="เลือกกัปตัน">กัปตัน</button>
+      </div>
+      <p class="error" id="personError">กรุณาเลือกผู้ทำงาน</p>
+
+      <div style="text-align: center; width: auto;">
+      <img src="Images/Pay.jpg" alt="Me" width="288" height="302">
+      </div>
+
+      <label for="file">แนบรูปภาพ:</label>
+      <input type="file" id="file" accept="image/*" aria-required="true">
+      <p class="error" id="fileError">กรุณาอัปโหลดไฟล์ภาพ</p>
+      <img id="imagePreview" class="image-preview" alt="ตัวอย่างรูปภาพที่เลือก">
+
+      <button type="submit" class="btn">ส่งข้อมูล</button>
+    </form>
+
+    <div class="back-home">
+      <button class="back-btn" onclick="goBackToForm()">กลับหน้าแรก</button>
+    </div>
+  </div>
+
+  <div class="container" id="successPage" style="display: none;">
+    <h2>ส่งงานสำเร็จ</h2>
+    <div class="success">
+      <div class="check">✅</div>
+      <h3>ส่งสำเร็จ</h3>
+      <p>ขอบคุณ (<span id="showName">ชื่อผู้กรอก</span>)</p>
+      <p>จะดำเนินการให้เร็วที่สุด ⚡</p>
+    </div>
+    <div class="back-home">
+      <button class="back-btn" onclick="goBackToForm()">กลับหน้าแรก</button>
+    </div>
+  </div>
+
+  <script>
+
+    function goBackToForm() {
+    document.getElementById('successPage').style.display = 'none';
+    document.getElementById('formPage').style.display = 'block';
+    document.getElementById('designForm').reset();
+    document.getElementById('imagePreview').style.display = 'none';
+    selectedPerson = '';
+    document.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.error').forEach(err => err.style.display = 'none');
+    }
+
+    let selectedPerson = "";
+
+    function selectPerson(button, name) {
+      selectedPerson = name;
+      document.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+    }
+
+    function validateForm(name, problem, file) {
+      let isValid = true;
+      document.querySelectorAll('.error').forEach(err => err.style.display = 'none');
+
+      if (!name.trim()) {
+        document.getElementById('nameError').style.display = 'block';
+        isValid = false;
+      }
+      // เปิดใช้ถ้าต้องการให้ problem บังคับ
+      // if (!problem.trim()) {
+      //   document.getElementById('problemError').style.display = 'block';
+      //   isValid = false;
+      // }
+      if (!selectedPerson) {
+        document.getElementById('personError').style.display = 'block';
+        isValid = false;
+      }
+      if (!file) {
+        document.getElementById('fileError').innerText = 'กรุณาอัปโหลดไฟล์ภาพ';
+        document.getElementById('fileError').style.display = 'block';
+        isValid = false;
+      } else if (file.size > 5 * 1024 * 1024) { // จำกัดขนาดไฟล์ 5MB
+        document.getElementById('fileError').innerText = 'ไฟล์ใหญ่เกิน 5MB';
+        document.getElementById('fileError').style.display = 'block';
+        isValid = false;
+      } else if (!file.type.startsWith('image/')) { // ตรวจสอบว่าเป็นไฟล์ภาพ
+        document.getElementById('fileError').innerText = 'กรุณาอัปโหลดไฟล์ภาพเท่านั้น';
+        document.getElementById('fileError').style.display = 'block';
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    // แสดงตัวอย่างรูปภาพ
+    document.getElementById('file').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      const preview = document.getElementById('imagePreview');
+      if (file && file.type.startsWith('image/')) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+        console.log('File selected:', file.name, file.size, file.type); // Debug
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+
+    document.getElementById('designForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const problem = document.getElementById('problem').value.trim();
+      const fileInput = document.getElementById('file');
+      const file = fileInput.files[0];
+
+      if (!validateForm(name, problem, file)) {
+        return;
+      }
+
+      // เตรียม FormData สำหรับส่งข้อมูล
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('problem', problem);
+      formData.append('person', selectedPerson);
+      formData.append('file', file);
+      console.log('FormData prepared, file:', file.name); // Debug
+
+      try {
+        const submitBtn = document.querySelector('.btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'กำลังส่ง...';
+
+        const response = await fetch('https://script.google.com/macros/s/AKfycbzVYUn-EsAXENmdNT4KYSIZtaIaSaooqtAB5Uf7rAKzrCZS5eIuHdvGM-MLh8cUpqeH/exec', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        console.log('Response:', result); // Debug
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'ส่งข้อมูล';
+
+        if (result.status === 'Success') {
+          document.getElementById('formPage').style.display = 'none';
+          document.getElementById('successPage').style.display = 'block';
+          document.getElementById('showName').innerText = name;
+        } else {
+          alert(`เกิดข้อผิดพลาด: ${result.message || 'ไม่สามารถส่งข้อมูลได้'}`);
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'ส่งข้อมูล';
+        alert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message);
+      }
+    });
+  </script>
+</body>
+</html>
